@@ -1,0 +1,90 @@
+#include <stdio.h>
+
+#define SIZE 100
+
+int heap[SIZE];
+int n = 0;
+
+// Swap
+void swap(int *a, int *b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+// Heapify Up
+void heapifyUp(int i) {
+    while(i > 0 && heap[(i - 1)/2] > heap[i]) {
+        swap(&heap[i], &heap[(i - 1)/2]);
+        i = (i - 1)/2;
+    }
+}
+
+// Heapify Down
+void heapifyDown(int i) {
+    int smallest = i;
+    int left = 2*i + 1;
+    int right = 2*i + 2;
+
+    if(left < n && heap[left] < heap[smallest])
+        smallest = left;
+
+    if(right < n && heap[right] < heap[smallest])
+        smallest = right;
+
+    if(smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        heapifyDown(smallest);
+    }
+}
+
+// Insert
+void insert(int x) {
+    if(n == SIZE) return;
+
+    heap[n] = x;
+    heapifyUp(n);
+    n++;
+}
+
+// Extract Min
+int extractMin() {
+    if(n == 0) return -1;
+
+    int min = heap[0];
+    heap[0] = heap[n - 1];
+    n--;
+
+    heapifyDown(0);
+    return min;
+}
+
+// Peek
+int peek() {
+    if(n == 0) return -1;
+    return heap[0];
+}
+
+int main() {
+    int N, x;
+    char op[15];
+
+    scanf("%d", &N);
+
+    for(int i = 0; i < N; i++) {
+        scanf("%s", op);
+
+        if(op[0] == 'i') { // insert
+            scanf("%d", &x);
+            insert(x);
+        }
+        else if(op[0] == 'e') { // extractMin
+            printf("%d\n", extractMin());
+        }
+        else if(op[0] == 'p') { // peek
+            printf("%d\n", peek());
+        }
+    }
+
+    return 0;
+}
