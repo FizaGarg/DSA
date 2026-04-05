@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for adjacency list
+typedef struct Node {
+    int vertex;
+    struct Node* next;
+} Node;
+
+// Function to create a new node
+Node* createNode(int v) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Queue structure for BFS
+typedef struct Queue {
+    int items[1000]; // You can adjust the size
+    int front;
+    int rear;
+} Queue;
+
+// Initialize queue
+void initQueue(Queue* q) {
+    q->front = -1;
+    q->rear = -1;
+}
+
+// Check if queue is empty
+int isEmpty(Queue* q) {
+    return q->front == -1;
+}
+
+// Enqueue element
+void enqueue(Queue* q, int value) {
+    if(q->rear == 999) {
+        printf("Queue overflow\n");
+        return;
+    }
+    if(isEmpty(q)) {
+        q->front = 0;
+    }
+    q->rear++;
+    q->items[q->rear] = value;
+}
+
+// Dequeue element
+int dequeue(Queue* q) {
+    if(isEmpty(q)) {
+        printf("Queue underflow\n");
+        return -1;
+    }
+    int item = q->items[q->front];
+    if(q->front == q->rear) {
+        q->front = q->rear = -1;
+    } else {
+        q->front++;
+    }
+    return item;
+}
+
+// BFS function
+void BFS(int s, int n, Node* adjList[]) {
+    int visited[n];
+    for(int i = 0; i < n; i++) visited[i] = 0;
+
+    Queue q;
+    initQueue(&q);
+
+    visited[s] = 1;
+    enqueue(&q, s);
+
+    printf("BFS traversal starting from vertex %d:\n", s);
+
+    while(!isEmpty(&q)) {
+        int v = dequeue(&q);
+        printf("%d ", v);
+
+        Node* temp = adjList[v];
+        while(temp != NULL) {
+            int u = temp->vertex;
+            if(!visited[u]) {
+                visited[u] = 1;
+                enqueue(&q, u);
+            }
+            temp = temp->next;
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int n, m;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &m);
+
+    Node* adjList[n];
+    for(int i = 0; i < n; i++) adjList[i] = NULL;
+
+    printf("Enter %d edges (u v):\n", m);
+    for(int i = 0; i < m; i++) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+
+        Node* newNode = createNode(v);
+        newNode->next = adjList[u];
+        adjList[u] = newNode;
+
+        // Uncomment for undirected graph
+        /*
+        newNode = createNode(u);
+        newNode->next = adjList[v];
+        adjList[v] = newNode;
+        */
+    }
+
+    int s;
+    printf("Enter starting vertex: ");
+    scanf("%d", &s);
+
+    BFS(s, n, adjList);
+
+    // Free memory
+    for(int i = 0; i < n; i++) {
+        Node* temp = adjList[i];
+        while(temp != NULL) {
+            Node* toFree = temp;
+            temp = temp->next;
+            free(toFree);
+        }
+    }
+
+    return 0;
+}
