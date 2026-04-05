@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* top = NULL;
+
+// Push
+void push(int val) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = val;
+    newNode->next = top;
+    top = newNode;
+}
+
+// Pop
+int pop() {
+    if(top == NULL) return 0;
+    struct Node* temp = top;
+    int val = temp->data;
+    top = top->next;
+    free(temp);
+    return val;
+}
+
+int main() {
+    char exp[100];
+    int i = 0;
+
+    // Read full line input
+    fgets(exp, sizeof(exp), stdin);
+
+    while(exp[i] != '\0') {
+
+        // If digit → push
+        if(isdigit(exp[i])) {
+            push(exp[i] - '0');
+        }
+
+        // If operator
+        else if(exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
+            int b = pop();
+            int a = pop();
+            int res;
+
+            switch(exp[i]) {
+                case '+': res = a + b; break;
+                case '-': res = a - b; break;
+                case '*': res = a * b; break;
+                case '/': res = a / b; break;
+            }
+            push(res);
+        }
+
+        i++;
+    }
+
+    // Final result
+    printf("%d", pop());
+
+    return 0;
+}
