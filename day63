@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for adjacency list
+typedef struct Node {
+    int vertex;
+    struct Node* next;
+} Node;
+
+// Function to create a new node
+Node* createNode(int v) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// DFS function using recursion
+void DFS(int v, int visited[], Node* adjList[]) {
+    visited[v] = 1; // Mark current vertex as visited
+    printf("%d ", v); // Print the vertex
+
+    Node* temp = adjList[v];
+    while(temp != NULL) {
+        if(!visited[temp->vertex]) {
+            DFS(temp->vertex, visited, adjList);
+        }
+        temp = temp->next;
+    }
+}
+
+int main() {
+    int n, m;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &m);
+
+    // Create adjacency list
+    Node* adjList[n];
+    for(int i = 0; i < n; i++) adjList[i] = NULL;
+
+    // Read edges
+    printf("Enter %d edges (u v):\n", m);
+    for(int i = 0; i < m; i++) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+
+        // Add edge u -> v
+        Node* newNode = createNode(v);
+        newNode->next = adjList[u];
+        adjList[u] = newNode;
+
+        // Uncomment for undirected graph:
+        /*
+        newNode = createNode(u);
+        newNode->next = adjList[v];
+        adjList[v] = newNode;
+        */
+    }
+
+    int s;
+    printf("Enter starting vertex: ");
+    scanf("%d", &s);
+
+    // DFS traversal
+    int visited[n];
+    for(int i = 0; i < n; i++) visited[i] = 0;
+
+    printf("DFS Traversal starting from vertex %d:\n", s);
+    DFS(s, visited, adjList);
+    printf("\n");
+
+    // Free memory
+    for(int i = 0; i < n; i++) {
+        Node* temp = adjList[i];
+        while(temp != NULL) {
+            Node* toFree = temp;
+            temp = temp->next;
+            free(toFree);
+        }
+    }
+
+    return 0;
+}
