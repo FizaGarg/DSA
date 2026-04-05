@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for linked list
+typedef struct Node {
+    int vertex;
+    struct Node* next;
+} Node;
+
+// Function to create a new node
+Node* createNode(int v) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+int main() {
+    int n, m;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &m);
+
+    // Create an array of pointers to represent adjacency lists
+    Node* adjList[n];
+    for(int i = 0; i < n; i++) {
+        adjList[i] = NULL;  // Initialize lists as empty
+    }
+
+    // Input edges
+    printf("Enter %d edges (u v):\n", m);
+    for(int i = 0; i < m; i++) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+
+        // Add v to u's adjacency list (directed graph)
+        Node* newNode = createNode(v);
+        newNode->next = adjList[u];
+        adjList[u] = newNode;
+
+        // Uncomment the next lines for undirected graph
+        /*
+        newNode = createNode(u);
+        newNode->next = adjList[v];
+        adjList[v] = newNode;
+        */
+    }
+
+    // Print adjacency list
+    printf("\nAdjacency Lists:\n");
+    for(int i = 0; i < n; i++) {
+        printf("Vertex %d: ", i);
+        Node* temp = adjList[i];
+        while(temp != NULL) {
+            printf("%d -> ", temp->vertex);
+            temp = temp->next;
+        }
+        printf("NULL\n");
+    }
+
+    // Free memory
+    for(int i = 0; i < n; i++) {
+        Node* temp = adjList[i];
+        while(temp != NULL) {
+            Node* toFree = temp;
+            temp = temp->next;
+            free(toFree);
+        }
+    }
+
+    return 0;
+}
