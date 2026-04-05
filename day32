@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+#define SIZE 100
+
+int stack[SIZE];
+int top = -1;
+
+// Push
+void push(int val) {
+    stack[++top] = val;
+}
+
+// Pop
+void pop() {
+    if(top == -1) return; // ignore underflow here
+    top--;
+}
+
+// Display
+void display() {
+    for(int i = top; i >= 0; i--) {
+        printf("%d ", stack[i]);
+    }
+}
+
+int main() {
+    int n, m, x;
+
+    scanf("%d", &n);
+
+    // Push elements
+    for(int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        push(x);
+    }
+
+    // Number of pops
+    scanf("%d", &m);
+
+    // Perform pops
+    for(int i = 0; i < m; i++) {
+        pop();
+    }
+
+    // Display remaining stack
+    display();
+
+    return 0;
+}
